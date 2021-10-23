@@ -2575,7 +2575,7 @@ $Xaml = @"
  <Button Content="Selectionner dossier" VerticalAlignment="Top" Margin="59,104,101,0" Height="27" Name="selectFolder" Background="#ffffff"/>
 <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Logia Compress Images" Margin="236,27,0,0" Foreground="#ffffff" FontSize="30"/>
 <Button Content="Compresser" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="355,286,0,0" Name="Compress" Background="#dcdae4"/>
-<Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#ffffff" Content="Directory : " Margin="234,154,0,0" Name="PathSelectedLabel"/>
+<Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#ffffff" Content="{Binding WelcomeMessege}" Margin="234,154,0,0" Name="PathSelectedLabel"/>
 </Grid>
 </Window>
 "@
@@ -2606,7 +2606,7 @@ Function Get-Folder($initialDirectory="")
 $global:folderPath=""
 function selectFolder {
 	$global:folderPath =  Get-Folder
-	$PathSelectedLabel.Text = "Répertoire "+$global:folderPath
+	$State.WelcomeMessege = "Répertoire "+$global:folderPath
 }
 
 function CompressImageClick {
@@ -2631,6 +2631,65 @@ $xml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name $_.Name -Va
 $selectFolder.Add_Click({selectFolder $this $_})
 $Compress.Add_Click({CompressImageClick $this $_})
 
+$State = [PSCustomObject]@{}
+
+
+Function Set-Binding {
+    Param($Target,$Property,$Index,$Name)
+ 
+    $Binding = New-Object System.Windows.Data.Binding
+    $Binding.Path = "["+$Index+"]"
+    $Binding.Mode = [System.Windows.Data.BindingMode]::TwoWay
+    
+
+
+    [void]$Target.SetBinding($Property,$Binding)
+}
+
+function FillDataContext($props){
+
+    For ($i=0; $i -lt $props.Length; $i++) {
+   
+   $prop = $props[$i]
+   $DataContext.Add($DataObject."$prop")
+   
+    $getter = [scriptblock]::Create("return `$DataContext['$i']")
+    $setter = [scriptblock]::Create("param(`$val) return `$DataContext['$i']=`$val")
+    $State | Add-Member -Name $prop -MemberType ScriptProperty -Value  $getter -SecondValue $setter
+               
+       }
+   }
+
+
+
+$DataObject =  ConvertFrom-Json @"
+
+{
+
+    "WelcomeMessege" : "Hello user",
+
+    "processList" : ["test","test2","test3"],
+
+    "currentProcess" : {
+
+        "name" : "test",
+
+        "status" : "online"
+
+    },
+
+    "currentTab" : 0
+
+}
+
+
+"@
+
+$DataContext = New-Object System.Collections.ObjectModel.ObservableCollection[Object]
+FillDataContext @("WelcomeMessege","processList","currentProcess","currentTab") 
+
+$Window.DataContext = $DataContext
+Set-Binding -Target $PathSelectedLabel -Property $([System.Windows.Controls.Label]::ContentProperty) -Index 0 -Name "WelcomeMessege"
 $Window.ShowDialog()
 
 
