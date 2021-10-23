@@ -2586,6 +2586,43 @@ $Xaml = @"
 
 
 #Write your code here
+function Get-FileName {  
+    [CmdletBinding()]  
+    Param (   
+        [Parameter(Mandatory = $false)]  
+        [string]$WindowTitle = 'Open File',
+
+        [Parameter(Mandatory = $false)]
+        [string]$InitialDirectory,  
+
+        [Parameter(Mandatory = $false)]
+        [string]$Filter = "All files (*.*)|*.*",
+
+        [switch]$AllowMultiSelect
+    ) 
+    Add-Type -AssemblyName System.Windows.Forms
+
+    $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
+    $openFileDialog.Title  = $WindowTitle
+    $openFileDialog.Filter = $Filter
+    $openFileDialog.CheckFileExists = $true
+    if (![string]::IsNullOrWhiteSpace($InitialDirectory)) { $openFileDialog.InitialDirectory = $InitialDirectory }
+    if ($AllowMultiSelect) { $openFileDialog.MultiSelect = $true }
+
+    if ($openFileDialog.ShowDialog().ToString() -eq 'OK') {
+        if ($AllowMultiSelect) { 
+            $selected = @($openFileDialog.Filenames)
+        } 
+        else { 
+            $selected = $openFileDialog.Filename
+        }
+    }
+    # clean-up
+    $openFileDialog.Dispose()
+
+    return $selected
+}
+
 Function Get-Folder($initialDirectory="")
 
 {
