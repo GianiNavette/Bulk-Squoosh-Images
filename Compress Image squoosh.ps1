@@ -2571,11 +2571,11 @@ $Xaml = @"
 	</ResourceDictionary>
 </Window.Resources>
 
-<Grid Margin="0,-3,-6,-5" Background="#000000">
- <Button Content="Selectionner dossier" VerticalAlignment="Top" Margin="59,104,101,0" Height="27" Name="selectFolder" Background="#ffffff"/>
-<Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Logia Compress Images" Margin="236,27,0,0" Foreground="#ffffff" FontSize="30"/>
-<Button Content="Compresser" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="355,286,0,0" Name="Compress" Background="#dcdae4"/>
-<Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#ffffff" Content="{Binding WelcomeMessege}" Margin="234,154,0,0" Name="PathSelectedLabel"/>
+<Grid Margin="-9,-6,3,-2" Background="#000000">
+ <Button Content="Selectionner dossier" VerticalAlignment="Top" Margin="58,101,95,0" Height="27" Name="selectFolder" Background="#ffffff"/>
+<Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Logia Kompressor" Margin="267,30,0,0" Foreground="#ffffff" FontSize="30"/>
+<Button Content="Compresser" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="355,287,0,0" Name="Compress" Background="#dcdae4"/>
+<Label HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#ffffff" Content="{Binding WelcomeMessege}" Margin="0,156,101,197" Name="PathSelectedLabel" FlowDirection="RightToLeft" Width="638" Height="16"/>
 </Grid>
 </Window>
 "@
@@ -2703,7 +2703,7 @@ $DataObject =  ConvertFrom-Json @"
 
 {
 
-    "WelcomeMessege" : "Hello user",
+    "WelcomeMessege" : "Répertoire : ",
 
     "processList" : ["test","test2","test3"],
 
